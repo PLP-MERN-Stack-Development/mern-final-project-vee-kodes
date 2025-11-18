@@ -21,6 +21,8 @@ jobs:
       run: cd backend && npm ci
     - name: Run backend tests
       run: cd backend && npm test
+      env:
+        NODE_ENV: test
 
   frontend-test:
     runs-on: ubuntu-latest
@@ -34,7 +36,13 @@ jobs:
         cache-dependency-path: frontend/package-lock.json
     - name: Install frontend dependencies
       run: cd frontend && npm ci
+      env:
+        CYPRESS_INSTALL_BINARY: 0
     - name: Run frontend unit tests
       run: cd frontend && npm test
+      env:
+        CYPRESS_INSTALL_BINARY: 0
     - name: Run frontend e2e tests
       run: cd frontend && npx cypress run --config-file cypress.config.js
+      env:
+        CYPRESS_INSTALL_BINARY: 0
