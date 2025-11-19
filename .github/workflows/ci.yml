@@ -29,12 +29,9 @@ jobs:
     # Frontend setup and tests
     - name: Install frontend dependencies
       run: cd frontend && npm ci
-      env:
-        CYPRESS_INSTALL_BINARY: 0
     - name: Run frontend unit tests
       run: cd frontend && npm test
       env:
-        CYPRESS_INSTALL_BINARY: 0
         VITE_API_URL: http://localhost:5000
 
     # E2E tests
@@ -53,7 +50,6 @@ jobs:
     - name: Start frontend dev server
       run: cd frontend && npm run dev &
       env:
-        CYPRESS_INSTALL_BINARY: 0
         VITE_API_URL: http://localhost:5000
     - name: Wait for frontend to be ready
       run: |
@@ -61,5 +57,4 @@ jobs:
     - name: Run frontend e2e tests
       run: cd frontend && npx cypress run --config-file cypress.config.js
       env:
-        CYPRESS_INSTALL_BINARY: 0
         VITE_API_URL: http://localhost:5000
