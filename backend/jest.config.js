@@ -1,6 +1,7 @@
 module.exports = {
   testEnvironment: 'node',
   testMatch: ['**/tests/**/*.test.js'],
+  testPathIgnorePatterns: ['integration'],
   collectCoverageFrom: [
     'controllers/**/*.js',
     'models/**/*.js',

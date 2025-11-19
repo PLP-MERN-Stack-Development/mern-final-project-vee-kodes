@@ -1,6 +1,11 @@
 export default {
   testEnvironment: 'jsdom',
   extensionsToTreatAsEsm: ['.jsx'],
+  globals: {
+    'ts-jest': {
+      useESM: true,
+    },
+  },
   setupFilesAfterEnv: ['<rootDir>/src/setupTests.js'],
   moduleNameMapper: {
     '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
@@ -18,4 +23,7 @@ export default {
     '!src/main.jsx',
     '!src/index.css',
   ],
+  testEnvironmentOptions: {
+    customExportConditions: [''],
+  },
 };

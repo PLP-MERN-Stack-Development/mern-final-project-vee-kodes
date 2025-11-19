@@ -9,6 +9,5 @@ module.exports = {
   ],
   setupFilesAfterEnv: ['<rootDir>/tests/integration-setup.js'],
   testTimeout: 30000, // Longer timeout for integration tests
-  // Don't use the global setup.js that mocks mongoose
   setupFiles: [],
 };
