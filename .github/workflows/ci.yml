@@ -7,7 +7,7 @@ on:
     branches: [ main, develop ]
 
 jobs:
-  backend-test:
+  test:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -17,23 +17,16 @@ jobs:
         node-version: '18'
         cache: 'npm'
         cache-dependency-path: backend/package-lock.json
+
+    # Backend setup and tests
     - name: Install backend dependencies
       run: cd backend && npm ci
-    - name: Run backend tests
+    - name: Run backend unit tests
       run: cd backend && npm test
       env:
         NODE_ENV: test
 
-  frontend-test:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '18'
-        cache: 'npm'
-        cache-dependency-path: frontend/package-lock.json
+    # Frontend setup and tests
     - name: Install frontend dependencies
       run: cd frontend && npm ci
       env:
@@ -42,7 +35,31 @@ jobs:
       run: cd frontend && npm test
       env:
         CYPRESS_INSTALL_BINARY: 0
+        VITE_API_URL: http://localhost:5000
+
+    # E2E tests
+    - name: Start backend server
+      run: cd backend && npm run dev &
+      env:
+        NODE_ENV: ci
+        MONGO_URI: ${{ secrets.MONGO_URI }}
+        JWT_SECRET: ${{ secrets.JWT_SECRET }}
+        SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+        CLIENT_URL: http://localhost:5173
+        PORT: 5000
+    - name: Wait for backend to be ready
+      run: |
+        timeout 60 bash -c 'until curl -f http://localhost:5000 > /dev/null 2>&1; do sleep 2; done' || echo "Backend ready check failed"
+    - name: Start frontend dev server
+      run: cd frontend && npm run dev &
+      env:
+        CYPRESS_INSTALL_BINARY: 0
+        VITE_API_URL: http://localhost:5000
+    - name: Wait for frontend to be ready
+      run: |
+        timeout 60 bash -c 'until curl -f http://localhost:5173 > /dev/null 2>&1; do sleep 2; done' || echo "Frontend ready check failed"
     - name: Run frontend e2e tests
       run: cd frontend && npx cypress run --config-file cypress.config.js
       env:
         CYPRESS_INSTALL_BINARY: 0
+        VITE_API_URL: http://localhost:5000
