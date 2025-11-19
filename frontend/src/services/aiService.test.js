@@ -1,11 +1,24 @@
-import * as aiService from './aiService.js';
-
-// Mock the api module
-jest.mock('./api.js', () => ({
-  default: {
-    get: jest.fn(),
+// Mock import.meta.env
+global.import = global.import || {};
+global.import.meta = {
+  env: {
+    VITE_API_URL: 'http://localhost:5000',
   },
+};
+
+// Mock axios
+jest.mock('axios', () => ({
+  create: jest.fn(() => ({
+    get: jest.fn(),
+    interceptors: {
+      response: {
+        use: jest.fn(),
+      },
+    },
+  })),
 }));
+
+import * as aiService from './aiService.js';
 
 // Mock react-toastify
 jest.mock('react-toastify', () => ({
@@ -14,8 +27,8 @@ jest.mock('react-toastify', () => ({
   },
 }));
 
-const mockApi = require('./api.js').default;
-
+const mockAxios = require('axios');
+const mockApi = mockAxios.create.mock.results[0].value;
 describe('aiService', () => {
   beforeEach(() => {
     jest.clearAllMocks();

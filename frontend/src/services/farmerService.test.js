@@ -1,14 +1,28 @@
-import * as farmerService from './farmerService.js';
+// Mock import.meta.env
+global.import = global.import || {};
+global.import.meta = {
+  env: {
+    VITE_API_URL: 'http://localhost:5000',
+  },
+};
 
-// Mock the api module
-jest.mock('./api.js', () => ({
-  default: {
+// Mock axios
+jest.mock('axios', () => ({
+  create: jest.fn(() => ({
     get: jest.fn(),
     post: jest.fn(),
-  },
+    interceptors: {
+      response: {
+        use: jest.fn(),
+      },
+    },
+  })),
 }));
 
-const mockApi = require('./api.js').default;
+import * as farmerService from './farmerService.js';
+
+const mockAxios = require('axios');
+const mockApi = mockAxios.create.mock.results[0].value;
 
 describe('farmerService', () => {
   beforeEach(() => {

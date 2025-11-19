@@ -63,7 +63,7 @@ export const getQualityDistributionChart = async () => {
           label: 'Produce Grade',
           data: data.series, // e.g., [1000, 500, 200, 50]
           backgroundColor: backgroundColors.slice(0, data.labels.length),
-          borderColor: backgroundColors.map(color => color.replace('0.6', '1')),
+          borderColor: backgroundColors.slice(0, data.labels.length).map(color => color.replace('0.6', '1')),
           borderWidth: 1,
         },
       ],
