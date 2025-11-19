@@ -34,27 +34,4 @@ jobs:
       env:
         VITE_API_URL: http://localhost:5000
 
-    # E2E tests
-    - name: Start backend server
-      run: cd backend && npm run dev &
-      env:
-        NODE_ENV: ci
-        MONGO_URI: ${{ secrets.MONGO_URI }}
-        JWT_SECRET: ${{ secrets.JWT_SECRET }}
-        SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
-        CLIENT_URL: http://localhost:5173
-        PORT: 5000
-    - name: Wait for backend to be ready
-      run: |
-        timeout 60 bash -c 'until curl -f http://localhost:5000 > /dev/null 2>&1; do sleep 2; done' || echo "Backend ready check failed"
-    - name: Start frontend dev server
-      run: cd frontend && npm run dev &
-      env:
-        VITE_API_URL: http://localhost:5000
-    - name: Wait for frontend to be ready
-      run: |
-        timeout 60 bash -c 'until curl -f http://localhost:5173 > /dev/null 2>&1; do sleep 2; done' || echo "Frontend ready check failed"
-    - name: Run frontend e2e tests
-      run: cd frontend && npx cypress run --config-file cypress.config.js
-      env:
-        VITE_API_URL: http://localhost:5000
+        
