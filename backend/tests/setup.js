@@ -9,6 +9,9 @@ jest.mock('mongoose', () => ({
     methods: {},
   })),
   model: jest.fn(),
+  Types: {
+    ObjectId: jest.fn(),
+  },
 }));
 
 // Mock OpenAI
